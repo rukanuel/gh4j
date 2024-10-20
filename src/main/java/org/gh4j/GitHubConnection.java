@@ -6,6 +6,7 @@ import java.net.URL;
 
 public class GitHubConnection {
 
+    // TODO make this reusable, do not check for PATs, and use furl endpoint URL as target, not just artifact specific
     public static HttpURLConnection createConnection(String owner, String repo) throws IOException, GH4JException {
         if (Client.getPAT() == null || Client.getPAT().isEmpty()) {
             throw new GH4JException("Personal Access Token (PAT) is not set.");

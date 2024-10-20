@@ -17,7 +17,7 @@ public class Artifacts {
     }
 
     public String getArtifacts(String owner, String repo) throws Exception, GH4JException {
-        HttpURLConnection connection = GitHubConnection.createConnection(owner, repo);  // Reuse connection logic
+        HttpURLConnection connection = GitHubConnection.createConnection(owner, repo);
 
         int responseCode = connection.getResponseCode();
         if (responseCode == 200) {
