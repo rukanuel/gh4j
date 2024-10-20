@@ -1,35 +1,23 @@
 package org.gh4j.actions;
 
 import org.gh4j.Client;
-import org.gh4j.Config;
+import org.gh4j.GH4JException;
+import org.gh4j.GitHubConnection;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URL;
 
 public class Artifacts {
 
-    //private Client client;
-
-    /*
-    See readme
-    public Artifacts() {
-        this.client = Client.getInstance();
+    public Artifacts() throws GH4JException {
+        if (Client.getPAT() == null || Client.getPAT().isEmpty()) {
+            throw new GH4JException("Personal Access Token (PAT) is not set.");
+        }
     }
-*/
-    public String getArtifacts(String owner, String repo) throws Exception {
-        String apiUrl = String.format(Config.API_BASE_URL + Config.ACTIONS_ARTIFACTS_PATH, owner, repo);
 
-        URL url = new URL(apiUrl);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-        connection.setRequestMethod("GET");
-
-        // Use the constants from Config class for headers
-        connection.setRequestProperty("Accept", Config.API_VERSION_HEADER);
-        connection.setRequestProperty("Authorization", Config.AUTHORIZATION_HEADER_PREFIX + Client.getPAT());  // Use the PAT from the Client class
-        connection.setRequestProperty("X-GitHub-Api-Version", Config.GITHUB_API_VERSION);
-        connection.setRequestProperty("User-Agent", Config.DEFAULT_USER_AGENT);  // Set the User-Agent from Config
+    public String getArtifacts(String owner, String repo) throws Exception, GH4JException {
+        HttpURLConnection connection = GitHubConnection.createConnection(owner, repo);  // Reuse connection logic
 
         int responseCode = connection.getResponseCode();
         if (responseCode == 200) {
@@ -44,7 +32,7 @@ public class Artifacts {
 
             return response.toString();
         } else {
-            return "Error: Unable to fetch artifacts. Response Code: " + responseCode;
+            throw new GH4JException("Error: Unable to fetch artifacts. Response Code: " + responseCode);
         }
     }
 }
